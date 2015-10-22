@@ -1,6 +1,8 @@
 package com.gft.algo.gamer.model;
 
 import javax.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +23,12 @@ public class Portfolio {
         return id;
     }
 
-    public void setId(long id) {
+    public Portfolio() {
+		super();
+	this.assets = new ArrayList<>();
+	}
+
+	public void setId(long id) {
         this.id = id;
     }
 

@@ -2,6 +2,7 @@ package com.gft.algo.gamer.model;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,11 +15,13 @@ public class Account {
 		super();
 		this.login = login;
 		this.password = password;
+		this.balance= new BigDecimal(10000);
+		this.portfolioList = new ArrayList<>();
 	}
 
 	public Account() {
 		super();
-		// TODO Auto-generated constructor stub
+	
 	}
 
 	@Id

@@ -1,10 +1,13 @@
 package com.gft.algo.gamer.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
 import java.util.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 /**
  * Created by iozi on 21/10/2015.
@@ -13,6 +16,7 @@ import java.util.Date;
 public class Transaction {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
 
     @ManyToOne

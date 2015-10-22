@@ -39,6 +39,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.gft.algo.gamer.model.Account;
@@ -70,7 +72,9 @@ public class Application extends SpringBootServletInitializer {
 	 
 	        @Override
 	        public void run(String... arg0) throws Exception {
-	          accountRepository.save(new Account("Wosin", "password"));
+	        	PasswordEncoder encoder = new BCryptPasswordEncoder();
+	        	
+	          accountRepository.save(new Account("Wosin", encoder.encode("password")));
 	          
 	        }
 	        
@@ -85,7 +89,7 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
  
   @Override
   public void init(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(userDetailsService());
+	  auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
   }
  
   @Bean
@@ -105,8 +109,15 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
       }
       
     };
+
   }
-}
+  @Bean
+ 	public PasswordEncoder passwordEncoder(){
+ 		PasswordEncoder encoder = new BCryptPasswordEncoder();
+ 		return encoder;
+ 	}
+  }
+
  
 @EnableWebSecurity
 @Configuration
@@ -118,5 +129,14 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     httpBasic().and().
     csrf().disable();
   }
-  
+ 
+  @Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
+	}
+  @Bean
+ 	public PasswordEncoder passwordEncoder(){
+ 		PasswordEncoder encoder = new BCryptPasswordEncoder();
+ 		return encoder;
+ 	}
 }
