@@ -1,6 +1,6 @@
 package com.gft.algo.gamer.repository;
 
-import com.gft.algo.gamer.model.User;
+import com.gft.algo.gamer.model.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
  * Created by iozi on 22/10/2015.
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
+public interface AccountRepository extends JpaRepository<Account, String> {
 }

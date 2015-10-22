@@ -8,9 +8,20 @@ import java.util.List;
  * Created by iozi on 21/10/2015.
  */
 @Entity
-public class User {
+public class Account {
 
-    @Id
+    public Account(String login, String password) {
+		super();
+		this.login = login;
+		this.password = password;
+	}
+
+	public Account() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	@Id
     private String login;
 
     private String password;
