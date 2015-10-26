@@ -15,7 +15,7 @@ public class Account {
 		super();
 		this.login = login;
 		this.password = password;
-		this.balance= new BigDecimal(10000);
+		this.balance= new BigDecimal(10000.00);
 		this.portfolioList = new ArrayList<>();
 	}
 

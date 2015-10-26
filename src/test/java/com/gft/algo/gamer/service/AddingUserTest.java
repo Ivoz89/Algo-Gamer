@@ -1,8 +1,5 @@
-package com.gft.algo.gamer.service;
+/*package com.gft.algo.gamer.service;
 
-import javax.validation.constraints.AssertFalse;
-
-import org.apache.bcel.verifier.statics.Pass1Verifier;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +37,8 @@ public class AddingUserTest extends TestCase {
 				 Assert.assertTrue(accountRepository.exists("Michal"));
 		}
 		 
-		 
-	  
+		
 	    }
 	 
 
+*/

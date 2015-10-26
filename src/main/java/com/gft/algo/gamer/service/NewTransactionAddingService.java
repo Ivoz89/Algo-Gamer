@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.gft.algo.gamer.aspect.Log;
 import com.gft.algo.gamer.model.Account;
+import com.gft.algo.gamer.model.StockData;
 import com.gft.algo.gamer.model.Transaction;
 import com.gft.algo.gamer.repository.AccountRepository;
 import com.gft.algo.gamer.repository.TransactionRepository;
@@ -19,17 +20,32 @@ public class NewTransactionAddingService {
 	AccountRepository accountRepository;
 	@Autowired
 	TransactionRepository transactionRepository;
+	@Autowired
+	DataDownloadService dataDownloadService;
 @Log
 	public String addNewTransaction(Transaction transaction,String username)
 	{
 		 final Logger logger = LoggerFactory.getLogger(NewTransactionAddingService.class);
 		Account account = accountRepository.findOne(username);
-		BigDecimal price = transaction.getPrice().multiply(new BigDecimal(transaction.getVolume()));
+		StockData stockData = null;
+BigDecimal price =null;
+
+		
+		try {
+		 stockData = dataDownloadService.downloadNewStock(transaction.getTicker());
+			
+		 price = stockData.getPrice().multiply(new BigDecimal(transaction.getVolume()));
+		} catch (DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int compare = stockData.getPrice().compareTo(transaction.getPrice()) ;
 		switch(transaction.getType())
 		{
 			case BUY:
 				if(canAfford(account, price))
 				{
+					if(compare == -1 || compare == 0  )
 					account.setBalance(account.getBalance().subtract(price));
 					accountRepository.saveAndFlush(account);
 					transactionRepository.saveAndFlush(transaction);
@@ -44,14 +60,14 @@ public class NewTransactionAddingService {
 				}
 				
 			case SELL:
-
+if(compare ==0 || compare == -1 ){
 				account.setBalance(account.getBalance().add(price));
 				accountRepository.saveAndFlush(account);
 				transactionRepository.saveAndFlush(transaction);
 				logger.info("Sucesfull Sell ");
 				return "Assests Sold Sucesfully";
 				
-			
+}
 		}
 		return null;
 	

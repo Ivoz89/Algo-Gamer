@@ -1,20 +1,28 @@
 package com.gft.algo.gamer.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import java.math.BigDecimal;
 
 /**
  * Created by iozi on 21/10/2015.
  */
-@Entity
+@Entity	
 public class Asset {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
 
-    @ManyToOne
+    public Asset() {
+		super();
+	}
+
+	@ManyToOne
     private Portfolio portfolio;
 
     private String ticker;
@@ -27,7 +35,16 @@ public class Asset {
         return id;
     }
 
-    public void setId(long id) {
+    public Asset(StockData stockData,int volume,Portfolio portfolio) {
+		super();
+		
+		this.portfolio=portfolio;
+		this.ticker = stockData.getTicker();
+		this.volume = volume;
+		this.priceBought = stockData.getPrice();
+	}
+
+	public void setId(long id) {
         this.id = id;
     }
 

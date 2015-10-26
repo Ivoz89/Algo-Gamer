@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.gft.algo.gamer.config.Application;
 import com.gft.algo.gamer.model.Account;
 import com.gft.algo.gamer.model.Portfolio;
+import com.gft.algo.gamer.model.StockData;
 import com.gft.algo.gamer.model.Transaction;
 import com.gft.algo.gamer.model.TransactionType;
 import com.gft.algo.gamer.repository.AccountRepository;
@@ -32,30 +33,31 @@ NewTransactionAddingService newTransactionAdding;
 AccountRepository accountRepository;
 @Autowired
 PortfolioRepository portfolioRepository;
+@Autowired
+DataDownloadService dataDownloadService;
 @Before
 public void  init(){
 	
 	Account account = accountRepository.findOne("Wosin");
-	account.setBalance(new BigDecimal(10000));
+	account.setBalance(new BigDecimal(10000.00));
 	accountRepository.save(account);
 	accountRepository.flush();
 	
 	
 }
     @Test
-    public void test() {
+    public void test() throws DataAccessException {
     	Transaction transaction = new Transaction();
 
    transaction.setPrice(new BigDecimal(100));
    transaction.setTicker("MSFT");
    transaction.setType(TransactionType.BUY);
    transaction.setVolume(10);
-
+   	StockData stockData = dataDownloadService.downloadNewStock("MSFT");
        newTransactionAdding.addNewTransaction(transaction, "Wosin");
        Account account = accountRepository.findOne("Wosin");
-       BigDecimal assumed = new BigDecimal(10000).subtract(transaction.getPrice().multiply(new BigDecimal(transaction.getVolume())));
-     
-       Assert.assertEquals(assumed.doubleValue(), account.getBalance().doubleValue() );
+       BigDecimal assumed = (new BigDecimal(10000.00).subtract(stockData.getPrice().multiply(new BigDecimal(transaction.getVolume()))));
+       Assert.assertEquals(assumed.floatValue(),account.getBalance().floatValue());
       
     }
     @Test
@@ -68,13 +70,13 @@ public void  init(){
    transaction.setPrice(new BigDecimal(1200));
    transaction.setTicker("MSFT");
    transaction.setType(TransactionType.BUY);
-   transaction.setVolume(10);
+   transaction.setVolume(100000000);
 
        Assert.assertEquals("Not Enough Money", newTransactionAdding.addNewTransaction(transaction, "Wosin"));
        
     }
     @Test
-    public void testIfSells() {
+    public void testIfSells() throws DataAccessException {
     	Transaction transaction = new Transaction();
    
 
@@ -82,11 +84,13 @@ public void  init(){
    transaction.setTicker("MSFT");
    transaction.setType(TransactionType.SELL);
    transaction.setVolume(10);
-   BigDecimal assumed = new BigDecimal(10000).add(transaction.getPrice().multiply(new BigDecimal(transaction.getVolume())));
+	StockData stockData = dataDownloadService.downloadNewStock("MSFT");
+   BigDecimal assumed = (new BigDecimal(10000.00).add(stockData.getPrice().multiply(new BigDecimal(transaction.getVolume()))));
+
    newTransactionAdding.addNewTransaction(transaction, "Wosin");
    Account account = accountRepository.findOne("Wosin");
 
-   Assert.assertEquals(assumed.doubleValue(), account.getBalance().doubleValue() );
+   Assert.assertEquals(assumed.floatValue(), account.getBalance().floatValue() );
        
     }
 }

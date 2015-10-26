@@ -1,9 +1,15 @@
 package com.gft.algo.gamer.model;
 
-import javax.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  * Created by iozi on 21/10/2015.
@@ -12,11 +18,13 @@ import java.util.List;
 public class Portfolio {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
 
     private String name;
-
+    
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  
     private List<Asset> assets;
 
     public long getId() {
