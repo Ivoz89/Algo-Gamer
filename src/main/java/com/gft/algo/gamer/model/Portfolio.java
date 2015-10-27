@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 /**
@@ -20,10 +21,30 @@ public class Portfolio {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
-
-    private String name;
+	@ManyToOne(targetEntity=Account.class)
     
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+ private Account account;
+
+
+
+
+	@Override
+public String toString() {
+	return "Portfolio [id=" + id + ", account=" + account + ", name=" + name
+			+ ", assets=" + assets + "]";
+}
+
+	public Account getAccount() {
+	return account;
+}
+
+public void setAccount(Account account) {
+	this.account = account;
+}
+
+	private String name;
+    
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL,targetEntity=Asset.class)
   
     private List<Asset> assets;
 

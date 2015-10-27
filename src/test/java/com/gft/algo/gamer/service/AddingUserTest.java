@@ -1,4 +1,4 @@
-/*package com.gft.algo.gamer.service;
+package com.gft.algo.gamer.service;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,8 +37,8 @@ public class AddingUserTest extends TestCase {
 				 Assert.assertTrue(accountRepository.exists("Michal"));
 		}
 		 
-		
+		 
+	  
 	    }
 	 
 
-*/

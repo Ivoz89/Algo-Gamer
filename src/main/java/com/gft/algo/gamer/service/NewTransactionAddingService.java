@@ -1,6 +1,8 @@
 package com.gft.algo.gamer.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.gft.algo.gamer.aspect.Log;
 import com.gft.algo.gamer.model.Account;
+import com.gft.algo.gamer.model.Portfolio;
 import com.gft.algo.gamer.model.StockData;
 import com.gft.algo.gamer.model.Transaction;
 import com.gft.algo.gamer.repository.AccountRepository;
@@ -22,14 +25,16 @@ public class NewTransactionAddingService {
 	TransactionRepository transactionRepository;
 	@Autowired
 	DataDownloadService dataDownloadService;
+	@Autowired
+	NewAssetService newAssetService;
 @Log
 	public String addNewTransaction(Transaction transaction,String username)
 	{
 		 final Logger logger = LoggerFactory.getLogger(NewTransactionAddingService.class);
-		Account account = accountRepository.findOne(username);
+		Account account = accountRepository.GetEagerPOrtfolio(username);
 		StockData stockData = null;
 BigDecimal price =null;
-
+List<Portfolio> portfolios = account.getPortfolioList();
 		
 		try {
 		 stockData = dataDownloadService.downloadNewStock(transaction.getTicker());
@@ -47,8 +52,11 @@ BigDecimal price =null;
 				{
 					if(compare == -1 || compare == 0  )
 					account.setBalance(account.getBalance().subtract(price));
+				newAssetService.BuyNewAsset(stockData, transaction.getVolume(),transaction.getPortfolio());
+			
 					accountRepository.saveAndFlush(account);
 					transactionRepository.saveAndFlush(transaction);
+					
 					logger.info("Asset Bought Sucesfully");
 					return "Assests Bought Sucesfully";
 			

@@ -1,6 +1,8 @@
 package com.gft.algo.gamer.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +18,7 @@ import com.gft.algo.gamer.model.StockData;
 import com.gft.algo.gamer.model.Transaction;
 import com.gft.algo.gamer.model.TransactionType;
 import com.gft.algo.gamer.repository.AccountRepository;
+import com.gft.algo.gamer.repository.AssetRepository;
 import com.gft.algo.gamer.repository.PortfolioRepository;
 
 import junit.framework.Assert;
@@ -35,13 +38,16 @@ AccountRepository accountRepository;
 PortfolioRepository portfolioRepository;
 @Autowired
 DataDownloadService dataDownloadService;
+@Autowired
+AssetRepository assetRepo;
 @Before
 public void  init(){
 	
 	Account account = accountRepository.findOne("Wosin");
 	account.setBalance(new BigDecimal(10000.00));
-	accountRepository.save(account);
-	accountRepository.flush();
+
+	
+	
 	
 	
 }
@@ -53,12 +59,27 @@ public void  init(){
    transaction.setTicker("MSFT");
    transaction.setType(TransactionType.BUY);
    transaction.setVolume(10);
+
    	StockData stockData = dataDownloadService.downloadNewStock("MSFT");
-       newTransactionAdding.addNewTransaction(transaction, "Wosin");
-       Account account = accountRepository.findOne("Wosin");
+    Account account = new Account("adam","haslo");
+    Portfolio portfolio = new Portfolio();
+    List<Portfolio> ports= new ArrayList<>();
+	portfolio.setName("Portfail");
+	portfolio.setAccount(account);
+	ports.add(portfolio);
+
+account.setPortfolioList(ports);
+	accountRepository.save(account);
+	accountRepository.flush();
+
+	
+	transaction.setPortfolio(portfolioRepository.GetPortfolioforNameAndLogin("adam", "Portfail"));
+	
+       newTransactionAdding.addNewTransaction(transaction, "adam");
+       Account account1 = accountRepository.GetEagerPOrtfolio("adam");
        BigDecimal assumed = (new BigDecimal(10000.00).subtract(stockData.getPrice().multiply(new BigDecimal(transaction.getVolume()))));
-       Assert.assertEquals(assumed.floatValue(),account.getBalance().floatValue());
-      
+      Assert.assertEquals(assumed.setScale(2,BigDecimal.ROUND_UP),account1.getBalance().setScale(2,BigDecimal.ROUND_UP));
+    Assert.assertTrue(account1.getPortfolioList().get(0).getAssets().get(0).getTicker().contains("MSFT"));
     }
     @Test
     public void testIfCanAfford() {
@@ -73,7 +94,7 @@ public void  init(){
    transaction.setVolume(100000000);
 
        Assert.assertEquals("Not Enough Money", newTransactionAdding.addNewTransaction(transaction, "Wosin"));
-       
+
     }
     @Test
     public void testIfSells() throws DataAccessException {

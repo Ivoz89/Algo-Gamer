@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Created by iozi on 21/10/2015.
  */
@@ -22,7 +24,8 @@ public class Asset {
 		super();
 	}
 
-	@ManyToOne
+	@ManyToOne(targetEntity=Portfolio.class)
+	@JsonIgnore
     private Portfolio portfolio;
 
     private String ticker;

@@ -1,9 +1,7 @@
-/*package com.gft.algo.gamer.rest;
+package com.gft.algo.gamer.rest;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gft.algo.gamer.model.Account;
-import com.gft.algo.gamer.model.AccountDTO;
 import com.gft.algo.gamer.model.Asset;
 import com.gft.algo.gamer.model.Portfolio;
 import com.gft.algo.gamer.model.StockData;
@@ -31,8 +28,8 @@ public class Portfolios {
 	PortfolioRepository portfolioRepo;
 	@Autowired 
 	AssetRepository assetRepo;
-	   @RequestMapping(value = "/users/{login}", method = RequestMethod.GET)
-	    public Account get(@PathVariable("login") String login) throws DataAccessException  {
+	   @RequestMapping(value = "/portfolio/{login}", method = RequestMethod.GET)
+	    public List<Portfolio> getPortfolios(@PathVariable("login") String login) throws DataAccessException  {
 		   Account account = accountRepo.findOne("Wosin");
 			StockData stockData = dataDownloadService.downloadNewStock("MSFT");
 			StockData stockData1 = dataDownloadService.downloadNewStock("FB");
@@ -40,8 +37,8 @@ public class Portfolios {
 			Portfolio portoflio1 = new Portfolio();
 			portfolio.setName("Microsoft");
 			portoflio1.setName("Fejsbuk");
-			Set<Asset> assets = new HashSet<>();
-			Set<Asset> assets1 = new HashSet<>();
+			List<Asset> assets = new ArrayList<>();
+			List<Asset> assets1 = new ArrayList<>();
 			Asset asset = new Asset(stockData, 100, portfolio);
 			Asset asset1 = new Asset(stockData1, 1001, portoflio1);
 			assets.add(asset);
@@ -61,7 +58,6 @@ public class Portfolios {
 
 			account.setPortfolioList(portfolios);
 			accountRepo.saveAndFlush(account);
-			return accountRepo.findByIdAndFetchAlgorithmsEagerly("Wosin");
+			return accountRepo.GetPortfolios("Wosin");
 	    }
 }
-*/

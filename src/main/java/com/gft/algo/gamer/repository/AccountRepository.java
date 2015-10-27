@@ -22,4 +22,8 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
 	@Query("SELECT s.portfolioList FROM Account s WHERE s.login= (:login)")
 	List<Portfolio> GetPortfolios(@Param("login") String login);
+	@Query("SELECT s FROM Account s LEFT JOIN FETCH  s.portfolioList al WHERE s.login= (:login)")
+	Account GetEagerPOrtfolio(@Param("login") String login);
+	
+	
 }

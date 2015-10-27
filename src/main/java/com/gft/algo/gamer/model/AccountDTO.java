@@ -14,7 +14,7 @@ import javax.persistence.OneToMany;
 public class AccountDTO {
 	@Id
 	private String login;
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,targetEntity=Portfolio.class)
 	  private List<Portfolio> portfolioList;
 	  private BigDecimal balance;
 	public String getLogin() {

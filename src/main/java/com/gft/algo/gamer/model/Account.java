@@ -1,9 +1,14 @@
 package com.gft.algo.gamer.model;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  * Created by iozi on 21/10/2015.
@@ -22,6 +27,7 @@ public class Account {
 	public Account() {
 		super();
 	
+	
 	}
 
 	@Id
@@ -29,7 +35,7 @@ public class Account {
 
     private String password;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,targetEntity=Portfolio.class)
     private List<Portfolio> portfolioList;
 
     private BigDecimal balance;
