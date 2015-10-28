@@ -30,88 +30,96 @@ import junit.framework.Assert;
 @SpringApplicationConfiguration(classes = {Application.class})
 
 public class ExampleTest {
-@Autowired
-NewTransactionAddingService newTransactionAdding;
-@Autowired
-AccountRepository accountRepository;
-@Autowired
-PortfolioRepository portfolioRepository;
-@Autowired
-DataDownloadService dataDownloadService;
-@Autowired
-AssetRepository assetRepo;
-@Before
-public void  init(){
-	
-	Account account = accountRepository.findOne("Wosin");
-	account.setBalance(new BigDecimal(10000.00));
+	@Autowired
+	NewTransactionAddingService newTransactionAdding;
+	@Autowired
+	AccountRepository accountRepository;
+	@Autowired
+	PortfolioRepository portfolioRepository;
+	@Autowired
+	DataDownloadService dataDownloadService;
+	@Autowired
+	AssetRepository assetRepo;
+	@Before
+	public void init() {
 
-	
-	
-	
-	
-}
-    @Test
-    public void test() throws DataAccessException {
-    	Transaction transaction = new Transaction();
+		Account account = accountRepository.findOne("Wosin");
+		account.setBalance(new BigDecimal(10000.00));
 
-   transaction.setPrice(new BigDecimal(100));
-   transaction.setTicker("MSFT");
-   transaction.setType(TransactionType.BUY);
-   transaction.setVolume(10);
+	}
+	@Test
+	public void test() throws DataAccessException {
+		Transaction transaction = new Transaction();
 
-   	StockData stockData = dataDownloadService.downloadNewStock("MSFT");
-    Account account = new Account("adam","haslo");
-    Portfolio portfolio = new Portfolio();
-    List<Portfolio> ports= new ArrayList<>();
-	portfolio.setName("Portfail");
-	portfolio.setAccount(account);
-	ports.add(portfolio);
+		transaction.setPrice(new BigDecimal(100));
+		transaction.setTicker("MSFT");
+		transaction.setType(TransactionType.BUY);
+		transaction.setVolume(10);
 
-account.setPortfolioList(ports);
-	accountRepository.save(account);
-	accountRepository.flush();
+		StockData stockData = dataDownloadService.downloadNewStock("MSFT");
+		Account account = new Account("adam", "haslo");
+		Portfolio portfolio = new Portfolio();
+		List<Portfolio> ports = new ArrayList<>();
+		portfolio.setName("Portfail");
+		portfolio.setAccount(account);
+		ports.add(portfolio);
 
-	
-	transaction.setPortfolio(portfolioRepository.GetPortfolioforNameAndLogin("adam", "Portfail"));
-	
-       newTransactionAdding.addNewTransaction(transaction, "adam");
-       Account account1 = accountRepository.GetEagerPOrtfolio("adam");
-       BigDecimal assumed = (new BigDecimal(10000.00).subtract(stockData.getPrice().multiply(new BigDecimal(transaction.getVolume()))));
-      Assert.assertEquals(assumed.setScale(2,BigDecimal.ROUND_UP),account1.getBalance().setScale(2,BigDecimal.ROUND_UP));
-    Assert.assertTrue(account1.getPortfolioList().get(0).getAssets().get(0).getTicker().contains("MSFT"));
-    }
-    @Test
-    public void testIfCanAfford() {
-    	Transaction transaction = new Transaction();
-    	Portfolio port = new Portfolio();
-    	port.setName("Portfolio");
-    	portfolioRepository.saveAndFlush(port);
-   transaction.setPortfolio(port);
-   transaction.setPrice(new BigDecimal(1200));
-   transaction.setTicker("MSFT");
-   transaction.setType(TransactionType.BUY);
-   transaction.setVolume(100000000);
+		account.setPortfolioList(ports);
+		accountRepository.save(account);
+		accountRepository.flush();
 
-       Assert.assertEquals("Not Enough Money", newTransactionAdding.addNewTransaction(transaction, "Wosin"));
+		transaction.setPortfolio(portfolioRepository
+				.GetPortfolioforNameAndLogin("adam", "Portfail"));
 
-    }
-    @Test
-    public void testIfSells() throws DataAccessException {
-    	Transaction transaction = new Transaction();
-   
+		newTransactionAdding.addNewTransaction(transaction, "adam", null);
+		Account account1 = accountRepository.GetEagerPOrtfolio("adam");
+		BigDecimal assumed = (new BigDecimal(10000.00).subtract(stockData
+				.getPrice().multiply(new BigDecimal(transaction.getVolume()))));
+		Assert.assertEquals(assumed.setScale(1, BigDecimal.ROUND_UP),
+				account1.getBalance().setScale(1, BigDecimal.ROUND_UP));
+		Assert.assertTrue(account1.getPortfolioList().get(0).getAssets().get(0)
+				.getTicker().contains("MSFT"));
+	}
+	@Test
+	public void testIfCanAfford() {
+		Transaction transaction = new Transaction();
+		Portfolio port = new Portfolio();
+		port.setName("Portfolio");
+		portfolioRepository.saveAndFlush(port);
+		transaction.setPortfolio(port);
+		transaction.setPrice(new BigDecimal(1200));
+		transaction.setTicker("MSFT");
+		transaction.setType(TransactionType.BUY);
+		transaction.setVolume(100000000);
 
-   transaction.setPrice(new BigDecimal(1200));
-   transaction.setTicker("MSFT");
-   transaction.setType(TransactionType.SELL);
-   transaction.setVolume(10);
-	StockData stockData = dataDownloadService.downloadNewStock("MSFT");
-   BigDecimal assumed = (new BigDecimal(10000.00).add(stockData.getPrice().multiply(new BigDecimal(transaction.getVolume()))));
+		Assert.assertEquals("Not Enough Money", newTransactionAdding
+				.addNewTransaction(transaction, "Wosin", null));
 
-   newTransactionAdding.addNewTransaction(transaction, "Wosin");
-   Account account = accountRepository.findOne("Wosin");
+	}
+	@Test
+	public void testIfSells() throws DataAccessException {
+		Transaction transaction = new Transaction();
 
-   Assert.assertEquals(assumed.floatValue(), account.getBalance().floatValue() );
-       
-    }
+		transaction.setPrice(new BigDecimal(1200));
+		transaction.setTicker("MSFT");
+		transaction.setType(TransactionType.SELL);
+		transaction.setVolume(10);
+
+		StockData stockData = dataDownloadService.downloadNewStock("MSFT");
+		Account account = accountRepository.GetEagerPOrtfolio("adam");
+		transaction.setPortfolio(account.getPortfolioList().get(0));
+		BigDecimal assumed = (account.getBalance().add(stockData.getPrice()
+				.multiply(new BigDecimal(transaction.getVolume()))));
+		Assert.assertTrue(account.getPortfolioList().get(0).getAssets().get(0)
+				.getTicker().contains("MSFT"));
+		newTransactionAdding.addNewTransaction(transaction, "adam",
+				account.getPortfolioList().get(0).getAssets().get(0));
+
+		Account account1 = accountRepository.GetEagerPOrtfolio("adam");
+		
+	Assert.assertTrue(account.getPortfolioList().get(0).getAssets().size()==0);
+		Assert.assertEquals(assumed.floatValue(),
+				account1.getBalance().floatValue());
+
+	}
 }

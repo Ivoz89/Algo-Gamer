@@ -16,6 +16,6 @@ import com.gft.algo.gamer.model.Portfolio;
 public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
 	@Query("SELECT p from Portfolio p  LEFT JOIN FETCH p.assets WHERE p.account.login= (:login) AND p.name = (:name)")
 	Portfolio GetPortfolioforNameAndLogin(@Param("login") String login,@Param("name") String name);
-	@Query("SELECT p from Portfolio p  LEFT JOIN FETCH p.assets WHERE p.account.login= (:login) ")
+	@Query("SELECT DISTINCT p from Portfolio p  LEFT JOIN FETCH p.assets WHERE p.account.login= (:login) ")
 	List<Portfolio> GetPortfoliosforUser(@Param("login") String login);
 }

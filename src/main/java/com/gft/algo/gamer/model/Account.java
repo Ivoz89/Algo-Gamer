@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Created by iozi on 21/10/2015.
  */
@@ -33,7 +35,14 @@ public class Account {
 	@Id
     private String login;
 
-    private String password;
+    @Override
+	public String toString() {
+		return "Account [login=" + login + ", password=" + password
+				+ ", portfolioList=" + portfolioList + ", balance=" + balance
+				+ "]";
+	}
+    @JsonIgnore
+	private String password;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,targetEntity=Portfolio.class)
     private List<Portfolio> portfolioList;

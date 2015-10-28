@@ -6,17 +6,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gft.algo.gamer.model.AccountDTO;
+import com.gft.algo.gamer.model.Account;
 import com.gft.algo.gamer.repository.AccountRepository;
 @RestController
 public class UserPageRest {
 	@Autowired
 	AccountRepository accountRepo;
 	   @RequestMapping(value = "/user/{login}", method = RequestMethod.GET)
-	    public AccountDTO get(@PathVariable("login") String login)  {
-		 AccountDTO accountDTO = accountRepo.GetDTOforLogin("Wosin");
+	    public Account get(@PathVariable("login") String login)  {
+		
 
-		 accountDTO.setPortfolioList(accountRepo.GetPortfolios("Wosin"));
+		   	
 		   
-	       return 	accountDTO;    }
+	       return accountRepo.GetEagerPOrtfolio(login);    }
 }

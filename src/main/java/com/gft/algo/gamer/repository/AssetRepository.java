@@ -16,4 +16,5 @@ import com.gft.algo.gamer.model.Asset;
 public interface AssetRepository extends JpaRepository<Asset, Long> {
 	@Query("SELECT  s FROM Asset s  inner join s.portfolio p inner join p.account a WHERE s.portfolio.account.login= (:login)")
 	List<Asset> GetEagerAll(@Param("login") String login);
+
 }

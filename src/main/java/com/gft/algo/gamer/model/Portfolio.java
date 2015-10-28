@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Created by iozi on 21/10/2015.
  */
@@ -22,17 +24,12 @@ public class Portfolio {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private long id;
 	@ManyToOne(targetEntity=Account.class)
-    
+    @JsonIgnore
  private Account account;
 
 
 
 
-	@Override
-public String toString() {
-	return "Portfolio [id=" + id + ", account=" + account + ", name=" + name
-			+ ", assets=" + assets + "]";
-}
 
 	public Account getAccount() {
 	return account;
